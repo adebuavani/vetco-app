@@ -1,2 +1,3 @@
-# vetco-app
-farmvet
+# Vetco App
+This is the Vetco app for veterinary services...
+
