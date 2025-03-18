@@ -3,17 +3,22 @@
 import { useState, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
-import { supabase } from '@/lib/supabase'
+import { createClient } from '@supabase/supabase-js'
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
+)
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '../../../components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Badge } from '@/components/ui/badge'
+import { Badge } from '../../../components/ui/badge'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { toast } from '@/components/ui/use-toast'
-import { Calendar, Clock, ArrowLeft, PlusCircle, Pencil, Trash2, AlertCircle } from 'lucide-react'
+import { toast } from '../../../components/ui/use-toast'
+import { Calendar, ArrowLeft, PlusCircle, Pencil, Trash2, AlertCircle } from 'lucide-react'
 import { format, parseISO } from 'date-fns'
 
 export default function AnimalDetailsPage() {
@@ -63,7 +68,7 @@ export default function AnimalDetailsPage() {
       // Check if health_records table exists, if not create it
       try {
         // First, check if the health_records table exists
-        const { data: healthRecordsTable, error: tableError } = await supabase
+        const { error: tableError } = await supabase
           .from('health_records')
           .select('id')
           .limit(1)
