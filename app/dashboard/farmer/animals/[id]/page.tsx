@@ -5,33 +5,64 @@ import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@supabase/supabase-js'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
-)
+// Ensure environment variables exist
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error('Supabase environment variables are missing.')
+}
+
+const supabase = createClient(supabaseUrl, supabaseAnonKey)
+
+// Corrected UI Component Imports
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '../../../components/ui/card'
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Badge } from '../../../components/ui/badge'
+import { Badge } from '@/components/ui/badge'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { toast } from '../../../components/ui/use-toast'
+import { toast } from '@/components/ui/use-toast'
+
+// Icon Imports
 import { Calendar, ArrowLeft, PlusCircle, Pencil, Trash2, AlertCircle } from 'lucide-react'
 import { format, parseISO } from 'date-fns'
 
+// Type Definitions
+interface HealthRecord {
+  id: string
+  title: string
+  description: string
+  treatment: string
+  vet_name: string
+  cost: number
+  created_at: string
+}
+
+interface Animal {
+  id: string
+  name: string
+  breed: string
+  age: number
+  health_status: string
+}
+
+// Component
 export default function AnimalDetailsPage() {
   const router = useRouter()
   const params = useParams()
-  const animalId = params.id as string
+  const animalId = params?.id as string
+
+  // State Management
+  const [animal, setAnimal] = useState<Animal | null>(null)
+  const [healthRecords, setHealthRecords] = useState<HealthRecord[]>([])
+  const [loading, setLoading] = useState<boolean>(true)
+  const [isAddRecordDialogOpen, setIsAddRecordDialogOpen] = useState<boolean>(false)
+  const [isDeleteRecordDialogOpen, setIsDeleteRecordDialogOpen] = useState<boolean>(false)
+  const [selectedRecord, setSelectedRecord] = useState<HealthRecord | null>(null)
   
-  const [animal, setAnimal] = useState<any>(null)
-  const [healthRecords, setHealthRecords] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
-  const [isAddRecordDialogOpen, setIsAddRecordDialogOpen] = useState(false)
-  const [isDeleteRecordDialogOpen, setIsDeleteRecordDialogOpen] = useState(false)
-  const [selectedRecord, setSelectedRecord] = useState<any>(null)
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -39,6 +70,8 @@ export default function AnimalDetailsPage() {
     vet_name: '',
     cost: '',
   })
+}
+
   
   useEffect(() => {
     const fetchAnimalDetails = async () => {
