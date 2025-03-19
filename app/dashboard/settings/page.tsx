@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
-import { toast } from '@/components/ui/use-toast'
+import { toast } from 'sonner' // Keep only this import
 
 export default function SettingsPage() {
   const [notifications, setNotifications] = useState({
@@ -23,9 +23,8 @@ export default function SettingsPage() {
   
   const handleSaveSettings = () => {
     // In a real app, you would save these settings to the database
-    toast({
-      title: 'Settings saved',
-      description: 'Your notification preferences have been updated.',
+    toast.success('Settings saved', {
+      description: 'Your notification preferences have been updated.'
     })
   }
   
