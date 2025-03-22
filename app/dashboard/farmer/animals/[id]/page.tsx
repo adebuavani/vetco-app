@@ -706,4 +706,3 @@ export default function AnimalDetailsPage() {
       </div>
     </div>
   )
-}
